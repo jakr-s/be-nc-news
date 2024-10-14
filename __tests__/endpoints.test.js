@@ -71,23 +71,21 @@ describe("endpoints", () => {
     test("should respond with a 200 status code and an array of articles", async () => {
       const response = await request(app).get("/api/articles");
       const articles = response.body.articles;
-      const expectedProperties = [
-        "author",
-        "title",
-        "article_id",
-        "topic",
-        "created_at",
-        "votes",
-        "article_img_url",
-        "comment_count",
-      ];
-
       expect(response.status).toBe(200);
       expect(Array.isArray(response.body.articles)).toBe(true);
       articles.forEach((article) => {
-        expectedProperties.forEach((prop) => {
-          expect(article).toHaveProperty(prop);
-        });
+        expect(article).toEqual(
+          expect.objectContaining({
+            author: expect.any(String),
+            title: expect.any(String),
+            article_id: expect.any(Number),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(String),
+          })
+        );
         expect(article).not.toHaveProperty("body");
       });
     });
@@ -105,12 +103,16 @@ describe("endpoints", () => {
       expect(response.status).toBe(200);
       expect(response.body.comments).toBeInstanceOf(Array);
       response.body.comments.forEach((comment) => {
-        expect(comment).toHaveProperty("comment_id");
-        expect(comment).toHaveProperty("votes");
-        expect(comment).toHaveProperty("created_at");
-        expect(comment).toHaveProperty("author");
-        expect(comment).toHaveProperty("body");
-        expect(comment).toHaveProperty("article_id");
+        expect(comment).toEqual(
+          expect.objectContaining({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            article_id: expect.any(Number),
+          })
+        );
       });
     });
 
@@ -123,7 +125,7 @@ describe("endpoints", () => {
     test("should return 400 for invalid article_id", async () => {
       const response = await request(app).get("/api/articles/invalid/comments");
       expect(response.status).toBe(400);
-      expect(response.body.msg).toBeDefined();
+      expect(response.body.msg).toBe("Bad Request");
     });
   });
 
@@ -134,39 +136,43 @@ describe("endpoints", () => {
         .post("/api/articles/1/comments")
         .send(newComment);
       expect(response.status).toBe(201);
-      expect(response.body.comment).toHaveProperty("comment_id");
-      expect(response.body.comment).toHaveProperty("votes", 0);
-      expect(response.body.comment).toHaveProperty("created_at");
-      expect(response.body.comment).toHaveProperty("author", "butter_bridge");
-      expect(response.body.comment).toHaveProperty("body", "Great article!");
-      expect(response.body.comment).toHaveProperty("article_id", 1);
+      expect(response.body.comment).toEqual(
+        expect.objectContaining({
+          comment_id: expect.any(Number),
+          votes: 0,
+          created_at: expect.any(String),
+          author: "butter_bridge",
+          body: "Great article!",
+          article_id: 1,
+        })
+      );
     });
+  });
 
-    test("should return 400 for missing required fields", async () => {
-      const response = await request(app)
-        .post("/api/articles/1/comments")
-        .send({});
-      expect(response.status).toBe(400);
-      expect(response.body.msg).toBe("Bad request: missing required fields");
-    });
+  test("should return 400 for missing required fields", async () => {
+    const response = await request(app)
+      .post("/api/articles/1/comments")
+      .send({});
+    expect(response.status).toBe(400);
+    expect(response.body.msg).toBe("Bad request: missing required fields");
+  });
 
-    test("should return 404 for non-existent article_id", async () => {
-      const newComment = { username: "butter_bridge", body: "Great article!" };
-      const response = await request(app)
-        .post("/api/articles/9999/comments")
-        .send(newComment);
-      expect(response.status).toBe(404);
-      expect(response.body.msg).toBe("Article not found");
-    });
+  test("should return 404 for non-existent article_id", async () => {
+    const newComment = { username: "butter_bridge", body: "Great article!" };
+    const response = await request(app)
+      .post("/api/articles/9999/comments")
+      .send(newComment);
+    expect(response.status).toBe(404);
+    expect(response.body.msg).toBe("Article not found");
+  });
 
-    test("should return 400 for invalid article_id", async () => {
-      const newComment = { username: "butter_bridge", body: "Great article!" };
-      const response = await request(app)
-        .post("/api/articles/invalid/comments")
-        .send(newComment);
-      expect(response.status).toBe(400);
-      expect(response.body.msg).toBeDefined();
-    });
+  test("should return 400 for invalid article_id", async () => {
+    const newComment = { username: "butter_bridge", body: "Great article!" };
+    const response = await request(app)
+      .post("/api/articles/invalid/comments")
+      .send(newComment);
+    expect(response.status).toBe(400);
+    expect(response.body.msg).toBeDefined();
   });
 });
 
