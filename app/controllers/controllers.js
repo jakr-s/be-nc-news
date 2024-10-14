@@ -1,5 +1,5 @@
 const { fetchTopics } = require("../models/topics");
-const { fetchArticleById } = require("../models/articles");
+const { fetchArticleById, fetchAllArticles } = require("../models/articles");
 
 exports.getTopics = async (req, res, next) => {
   try {
@@ -18,6 +18,15 @@ exports.getArticleById = async (req, res, next) => {
       return next({ status: 404, msg: "Article not found" });
     }
     res.status(200).send({ article });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getAllArticles = async (req, res, next) => {
+  try {
+    const articles = await fetchAllArticles();
+    res.status(200).send({ articles });
   } catch (err) {
     next(err);
   }

@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const { getTopics, getArticleById } = require("./controllers/controllers");
+const { getTopics, getArticleById, getAllArticles } = require("./controllers/controllers");
 const endpoints = require("../endpoints.json");
 const errorHandler = require("./middleware/errorHandler");
 
@@ -10,6 +10,7 @@ app.get("/api", (req, res) => {
 
 app.get("/api/topics", getTopics);
 app.get("/api/articles/:article_id", getArticleById);
+app.get("/api/articles", getAllArticles);
 
 // Handle 404 for undefined routes
 app.use((req, res, next) => {
@@ -18,6 +19,5 @@ app.use((req, res, next) => {
 
 // Error handling middleware
 app.use(errorHandler);
-
 
 module.exports = app;
