@@ -19,7 +19,7 @@ describe("endpoints", () => {
   });
 
   describe("/api/topics", () => {
-    test("GET /api/topics - success", async () => {
+    test("GET /api/topics - should return an array of topics with correct properties", async () => {
       const response = await request(app).get("/api/topics");
       expect(response.status).toBe(200);
       expect(response.body.topics).toBeInstanceOf(Array);
@@ -36,7 +36,7 @@ describe("endpoints", () => {
   });
 
   describe("/api/articles/:article_id", () => {
-    test("GET /api/articles/:article_id - success", async () => {
+    test("GET /api/articles/:article_id - should return the article with the specified ID and correct properties", async () => {
       const response = await request(app).get("/api/articles/1");
       expect(response.status).toBe(200);
       expect(response.body.article).toHaveProperty("author");
@@ -49,13 +49,13 @@ describe("endpoints", () => {
       expect(response.body.article).toHaveProperty("article_img_url");
     });
 
-    test("GET /api/articles/:article_id - article not found", async () => {
+    test("GET /api/articles/:article_id - should return 404 when the article with the specified ID does not exist", async () => {
       const response = await request(app).get("/api/articles/9999");
       expect(response.status).toBe(404);
       expect(response.body.msg).toBe("Article not found");
     });
 
-    test("GET /api/articles/:article_id - invalid article ID", async () => {
+    test("GET /api/articles/:article_id - should return 400 when the article ID is invalid", async () => {
       const response = await request(app).get("/api/articles/invalid");
       expect(response.status).toBe(400);
       expect(response.body.msg).toBe("Invalid article ID");
@@ -63,9 +63,10 @@ describe("endpoints", () => {
   });
 
   describe("error handling middleware", () => {
-    test("GET /api/invalid-endpoint - 404 error", async () => {
+    test("GET /api/invalid-endpoint - should return 404 when the endpoint does not exist", async () => {
       const response = await request(app).get("/api/invalid-endpoint");
       expect(response.status).toBe(404);
+      expect(response.body.msg).toBe("Route not found");
     });
   });
 });
