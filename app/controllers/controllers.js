@@ -1,5 +1,5 @@
 const { fetchTopics } = require("../models/topics");
-const { fetchArticleById, fetchAllArticles } = require("../models/articles");
+const { fetchArticleById, fetchAllArticles, fetchCommentsByArticleId } = require("../models/articles");
 
 exports.getTopics = async (req, res, next) => {
   try {
@@ -27,6 +27,19 @@ exports.getAllArticles = async (req, res, next) => {
   try {
     const articles = await fetchAllArticles();
     res.status(200).send({ articles });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getCommentsByArticleId = async (req, res, next) => {
+  try {
+    const { article_id } = req.params;
+    const comments = await fetchCommentsByArticleId(article_id);
+    if (!comments.length) {
+      return next({ status: 404, msg: "Comments not found" });
+    }
+    res.status(200).send({ comments });
   } catch (err) {
     next(err);
   }
