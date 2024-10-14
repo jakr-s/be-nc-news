@@ -10,7 +10,7 @@ beforeEach(() => seed(data));
 afterAll(() => db.end());
 
 describe("endpoints", () => {
-  describe("/api", () => {
+  describe("GET /api", () => {
     test("should return a list of all available API endpoints", async () => {
       const response = await request(app).get("/api");
       expect(response.status).toBe(200);
@@ -18,7 +18,7 @@ describe("endpoints", () => {
     });
   });
 
-  describe("/api/topics", () => {
+  describe("GET /api/topics", () => {
     test("should return an array of topics with correct properties", async () => {
       const response = await request(app).get("/api/topics");
       expect(response.status).toBe(200);
@@ -35,7 +35,7 @@ describe("endpoints", () => {
     });
   });
 
-  describe("/api/articles/:article_id", () => {
+  describe("GET /api/articles/:article_id", () => {
     test("should return the article with the specified ID and correct properties", async () => {
       const response = await request(app).get("/api/articles/1");
       expect(response.status).toBe(200);
