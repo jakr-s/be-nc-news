@@ -11,7 +11,7 @@ afterAll(() => db.end());
 
 describe("endpoints", () => {
   describe("/api", () => {
-    test("GET /api - success", async () => {
+    test("GET /api - should return a list of all available API endpoints", async () => {
       const response = await request(app).get("/api");
       expect(response.status).toBe(200);
       expect(response.body).toEqual(endpoints);
