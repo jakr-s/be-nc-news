@@ -39,14 +39,18 @@ describe("endpoints", () => {
     test("GET /api/articles/:article_id - should return the article with the specified ID and correct properties", async () => {
       const response = await request(app).get("/api/articles/1");
       expect(response.status).toBe(200);
-      expect(response.body.article).toHaveProperty("author");
-      expect(response.body.article).toHaveProperty("title");
-      expect(response.body.article).toHaveProperty("article_id");
-      expect(response.body.article).toHaveProperty("body");
-      expect(response.body.article).toHaveProperty("topic");
-      expect(response.body.article).toHaveProperty("created_at");
-      expect(response.body.article).toHaveProperty("votes");
-      expect(response.body.article).toHaveProperty("article_img_url");
+      expect(response.body.article).toEqual(
+        expect.objectContaining({
+          author: "butter_bridge",
+          title: "Living in the shadow of a great man",
+          article_id: 1,
+          body: "I find this existence challenging",
+          topic: "mitch",
+          created_at: expect.any(String),
+          votes: 100,
+          article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        })
+      );
     });
 
     test("GET /api/articles/:article_id - should return 404 when the article with the specified ID does not exist", async () => {
