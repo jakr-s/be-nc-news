@@ -6,6 +6,7 @@ const {
   getAllArticles,
   getCommentsByArticleId,
   addCommentToArticle,
+  updateArticleVotes,
 } = require("./controllers/controllers");
 const endpoints = require("../endpoints.json");
 const errorHandler = require("./middleware/errorHandler");
@@ -22,6 +23,7 @@ app.get("/api/articles/:article_id", getArticleById);
 app.get("/api/articles", getAllArticles);
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 app.post("/api/articles/:article_id/comments", addCommentToArticle);
+app.patch("/api/articles/:article_id", updateArticleVotes);
 
 // Handle 404 for undefined routes
 app.use((req, res, next) => {

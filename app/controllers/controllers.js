@@ -4,6 +4,7 @@ const {
   fetchAllArticles,
   fetchCommentsByArticleId,
   insertComment,
+  updateArticleVotes,
 } = require("../models/articles");
 
 exports.getTopics = async (req, res, next) => {
@@ -66,6 +67,29 @@ exports.addCommentToArticle = async (req, res, next) => {
 
     const comment = await insertComment(article_id, username, body);
     res.status(201).send({ comment });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.updateArticleVotes = async (req, res, next) => {
+  try {
+    const { article_id } = req.params;
+    const { inc_votes } = req.body;
+
+    if (!Number.isInteger(inc_votes)) {
+      return next({
+        status: 400,
+        msg: "Bad request: inc_votes must be an integer",
+      });
+    }
+
+    const updatedArticle = await updateArticleVotes(article_id, inc_votes);
+    if (!updatedArticle) {
+      return next({ status: 404, msg: "Article not found" });
+    }
+
+    res.status(200).send({ article: updatedArticle });
   } catch (err) {
     next(err);
   }
