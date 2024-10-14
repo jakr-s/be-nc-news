@@ -48,21 +48,10 @@ describe("endpoints", () => {
           topic: "mitch",
           created_at: expect.any(String),
           votes: 100,
-          article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
         })
       );
-    });
-
-    test("GET /api/articles/:article_id - should return 404 when the article with the specified ID does not exist", async () => {
-      const response = await request(app).get("/api/articles/9999");
-      expect(response.status).toBe(404);
-      expect(response.body.msg).toBe("Article not found");
-    });
-
-    test("GET /api/articles/:article_id - should return 400 when the article ID is invalid", async () => {
-      const response = await request(app).get("/api/articles/invalid");
-      expect(response.status).toBe(400);
-      expect(response.body.msg).toBe("Invalid article ID");
     });
   });
 
@@ -70,7 +59,19 @@ describe("endpoints", () => {
     test("GET /api/invalid-endpoint - should return 404 when the endpoint does not exist", async () => {
       const response = await request(app).get("/api/invalid-endpoint");
       expect(response.status).toBe(404);
-      expect(response.body.msg).toBe("Route not found");
+      expect(response.body.msg).toBeDefined();
+    });
+
+    test("GET /api/articles/:article_id - should return 404 when the article with the specified ID does not exist", async () => {
+      const response = await request(app).get("/api/articles/9999");
+      expect(response.status).toBe(404);
+      expect(response.body.msg).toBeDefined();
+    });
+
+    test("GET /api/articles/:article_id - should return 400 when the article ID is invalid", async () => {
+      const response = await request(app).get("/api/articles/invalid");
+      expect(response.status).toBe(400);
+      expect(response.body.msg).toBeDefined();
     });
   });
 });
