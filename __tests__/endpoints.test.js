@@ -126,6 +126,48 @@ describe("endpoints", () => {
       expect(response.body.msg).toBeDefined();
     });
   });
+
+  describe("POST /api/articles/:article_id/comments", () => {
+    test("should add a comment to the given article_id", async () => {
+      const newComment = { username: "butter_bridge", body: "Great article!" };
+      const response = await request(app)
+        .post("/api/articles/1/comments")
+        .send(newComment);
+      expect(response.status).toBe(201);
+      expect(response.body.comment).toHaveProperty("comment_id");
+      expect(response.body.comment).toHaveProperty("votes", 0);
+      expect(response.body.comment).toHaveProperty("created_at");
+      expect(response.body.comment).toHaveProperty("author", "butter_bridge");
+      expect(response.body.comment).toHaveProperty("body", "Great article!");
+      expect(response.body.comment).toHaveProperty("article_id", 1);
+    });
+
+    test("should return 400 for missing required fields", async () => {
+      const response = await request(app)
+        .post("/api/articles/1/comments")
+        .send({});
+      expect(response.status).toBe(400);
+      expect(response.body.msg).toBe("Bad request: missing required fields");
+    });
+
+    test("should return 404 for non-existent article_id", async () => {
+      const newComment = { username: "butter_bridge", body: "Great article!" };
+      const response = await request(app)
+        .post("/api/articles/9999/comments")
+        .send(newComment);
+      expect(response.status).toBe(404);
+      expect(response.body.msg).toBe("Article not found");
+    });
+
+    test("should return 400 for invalid article_id", async () => {
+      const newComment = { username: "butter_bridge", body: "Great article!" };
+      const response = await request(app)
+        .post("/api/articles/invalid/comments")
+        .send(newComment);
+      expect(response.status).toBe(400);
+      expect(response.body.msg).toBeDefined();
+    });
+  });
 });
 
 describe("error handling middleware", () => {
