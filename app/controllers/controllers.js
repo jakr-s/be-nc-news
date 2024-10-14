@@ -1,4 +1,5 @@
 const { fetchTopics } = require("../models/topics");
+const { fetchArticleById } = require("../models/articles");
 
 exports.getTopics = async (req, res, next) => {
   try {
@@ -9,21 +10,15 @@ exports.getTopics = async (req, res, next) => {
   }
 };
 
-const { fetchArticleById } = require("../models/articles");
-
 exports.getArticleById = async (req, res, next) => {
   try {
     const { article_id } = req.params;
     const article = await fetchArticleById(article_id);
     if (!article) {
-      return res.status(404).send({ msg: "Article not found" });
+      return next({ status: 404, msg: "Article not found" });
     }
     res.status(200).send({ article });
   } catch (err) {
-    if (err.code === "22P02") {
-      res.status(400).send({ msg: "Invalid article ID" });
-    } else {
-      next(err);
-    }
+    next(err);
   }
 };
