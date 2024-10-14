@@ -72,7 +72,7 @@ describe("endpoints", () => {
       });
     });
     describe("PATCH", () => {
-      test("200: responds with the updated article when votes are incremented", async () => {
+      test("should return the updated article when votes are incremented", async () => {
         const { body } = await request(app)
           .patch("/api/articles/1")
           .send({ inc_votes: 1 })
@@ -80,7 +80,7 @@ describe("endpoints", () => {
         expect(body.article.votes).toBe(101);
       });
 
-      test("200: responds with the updated article when votes are decremented", async () => {
+      test("should return the updated article when votes are decremented", async () => {
         const { body } = await request(app)
           .patch("/api/articles/1")
           .send({ inc_votes: -100 })
@@ -88,7 +88,7 @@ describe("endpoints", () => {
         expect(body.article.votes).toBe(0);
       });
 
-      test("400: responds with an error when inc_votes is not an integer", async () => {
+      test("should return 400 with an error when inc_votes is not an integer", async () => {
         const { body } = await request(app)
           .patch("/api/articles/1")
           .send({ inc_votes: "not-an-integer" })
@@ -96,7 +96,7 @@ describe("endpoints", () => {
         expect(body.msg).toBe("Bad request: inc_votes must be an integer");
       });
 
-      test("404: responds with an error when article_id does not exist", async () => {
+      test("should return 404 with an error when article_id does not exist", async () => {
         const { body } = await request(app)
           .patch("/api/articles/9999")
           .send({ inc_votes: 1 })
@@ -108,7 +108,7 @@ describe("endpoints", () => {
 
   describe("/api/articles", () => {
     describe("GET", () => {
-      test("should respond with a 200 status code and an array of articles", async () => {
+      test("should return an array of articles with the correct properties", async () => {
         const response = await request(app).get("/api/articles");
         const articles = response.body.articles;
         expect(response.status).toBe(200);
