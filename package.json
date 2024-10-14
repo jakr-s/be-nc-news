@@ -5,6 +5,7 @@
   },
   "dependencies": {
     "dotenv": "^16.0.0",
+    "nodemon": "^3.1.7",
     "pg": "^8.7.3"
   },
   "description": "bc-nc-news",
@@ -33,6 +34,7 @@
     "url": "git+https://github.com/northcoders/be-nc-news.git"
   },
   "scripts": {
+    "dev": "nodemon app/listen.js",
     "prepare": "husky install",
     "seed": "node ./db/seeds/run-seed.js",
     "setup-dbs": "psql -f ./db/setup.sql",
