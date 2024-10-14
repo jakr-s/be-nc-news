@@ -11,7 +11,7 @@ afterAll(() => db.end());
 
 describe("endpoints", () => {
   describe("/api", () => {
-    test("GET /api - should return a list of all available API endpoints", async () => {
+    test("should return a list of all available API endpoints", async () => {
       const response = await request(app).get("/api");
       expect(response.status).toBe(200);
       expect(response.body).toEqual(endpoints);
@@ -19,7 +19,7 @@ describe("endpoints", () => {
   });
 
   describe("/api/topics", () => {
-    test("GET /api/topics - should return an array of topics with correct properties", async () => {
+    test("should return an array of topics with correct properties", async () => {
       const response = await request(app).get("/api/topics");
       expect(response.status).toBe(200);
       expect(response.body.topics).toBeInstanceOf(Array);
@@ -36,7 +36,7 @@ describe("endpoints", () => {
   });
 
   describe("/api/articles/:article_id", () => {
-    test("GET /api/articles/:article_id - should return the article with the specified ID and correct properties", async () => {
+    test("should return the article with the specified ID and correct properties", async () => {
       const response = await request(app).get("/api/articles/1");
       expect(response.status).toBe(200);
       expect(response.body.article).toEqual(
@@ -53,48 +53,68 @@ describe("endpoints", () => {
         })
       );
     });
-  });
 
-  describe("/api/articles", () => {
-    test("GET /api/articles - should return an array of articles with correct properties", async () => {
-      const response = await request(app).get("/api/articles");
-      expect(response.status).toBe(200);
-      expect(response.body.articles).toBeInstanceOf(Array);
-      response.body.articles.forEach((article) => {
-        expect(article).toEqual(
-          expect.objectContaining({
-            author: expect.any(String),
-            title: expect.any(String),
-            article_id: expect.any(Number),
-            topic: expect.any(String),
-            created_at: expect.any(String),
-            votes: expect.any(Number),
-            article_img_url: expect.any(String),
-            comment_count: expect.any(Number),
-          })
-        );
-        expect(article).not.toHaveProperty("body");
-      });
-    });
-  });
-
-  describe("error handling middleware", () => {
-    test("GET /api/invalid-endpoint - should return 404 when the endpoint does not exist", async () => {
-      const response = await request(app).get("/api/invalid-endpoint");
-      expect(response.status).toBe(404);
-      expect(response.body.msg).toBeDefined();
-    });
-
-    test("GET /api/articles/:article_id - should return 404 when the article with the specified ID does not exist", async () => {
+    test("should return 404 when the article with the specified ID does not exist", async () => {
       const response = await request(app).get("/api/articles/9999");
       expect(response.status).toBe(404);
       expect(response.body.msg).toBeDefined();
     });
 
-    test("GET /api/articles/:article_id - should return 400 when the article ID is invalid", async () => {
+    test("should return 400 when the article ID is invalid", async () => {
       const response = await request(app).get("/api/articles/invalid");
       expect(response.status).toBe(400);
       expect(response.body.msg).toBeDefined();
     });
+  });
+
+  describe("GET /api/articles", () => {
+    test("should respond with a 200 status code and an array of articles", async () => {
+      const response = await request(app).get("/api/articles");
+      expect(response.status).toBe(200);
+      expect(Array.isArray(response.body.articles)).toBe(true);
+    });
+
+    test("should return articles with the correct properties", async () => {
+      const response = await request(app).get("/api/articles");
+      const articles = response.body.articles;
+      const expectedProperties = [
+        "author",
+        "title",
+        "article_id",
+        "topic",
+        "created_at",
+        "votes",
+        "article_img_url",
+        "comment_count",
+      ];
+
+      articles.forEach((article) => {
+        expectedProperties.forEach((prop) => {
+          expect(article).toHaveProperty(prop);
+        });
+        expect(article).not.toHaveProperty("body");
+      });
+    });
+
+    test("should return articles sorted by date in descending order", async () => {
+      const response = await request(app).get("/api/articles");
+      const articles = response.body.articles;
+      expect(articles).toBeSortedBy("created_at", { descending: true });
+    });
+  });
+
+  test("should return articles sorted by date in descending order", async () => {
+    const response = await request(app).get("/api/articles");
+    expect(response.status).toBe(200);
+    const articles = response.body.articles;
+    expect(articles).toBeSortedBy("created_at", { descending: true });
+  });
+});
+
+describe("error handling middleware", () => {
+  test("should return 404 when the endpoint does not exist", async () => {
+    const response = await request(app).get("/api/invalid-endpoint");
+    expect(response.status).toBe(404);
+    expect(response.body.msg).toBeDefined();
   });
 });
