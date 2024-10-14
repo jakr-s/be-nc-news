@@ -4,7 +4,7 @@ const { getTopics, getArticleById } = require("./controllers/controllers");
 const endpoints = require("../endpoints.json");
 
 app.get("/api", (req, res) => {
-  res.status(200).json(endpoints);
+  res.status(200).send(endpoints);
 });
 
 app.get("/api/topics", getTopics);
