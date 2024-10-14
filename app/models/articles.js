@@ -1,11 +1,14 @@
 const db = require("../../db/connection");
+const format = require("pg-format");
 
 exports.fetchArticleById = async (article_id) => {
-  const result = await db.query(
+  const queryStr = format(
     `SELECT * FROM articles
-      WHERE article_id = $1;`,
-    [article_id]
+     WHERE article_id = %L;`,
+    article_id
   );
+
+  const result = await db.query(queryStr);
   return result.rows[0];
 };
 
@@ -29,22 +32,42 @@ exports.fetchAllArticles = async () => {
 };
 
 exports.fetchCommentsByArticleId = async (article_id) => {
-  const result = await db.query(
+  const queryStr = format(
     `SELECT comment_id, votes, created_at, author, body, article_id
      FROM comments
-     WHERE article_id = $1
+     WHERE article_id = %L
      ORDER BY created_at DESC;`,
-    [article_id]
+    article_id
   );
+
+  const result = await db.query(queryStr);
   return result.rows;
 };
 
 exports.insertComment = async (article_id, username, body) => {
-  const result = await db.query(
+  const queryStr = format(
     `INSERT INTO comments (article_id, author, body, created_at, votes)
-     VALUES ($1, $2, $3, NOW(), 0)
+     VALUES (%L, %L, %L, NOW(), 0)
      RETURNING *;`,
-    [article_id, username, body]
+    article_id,
+    username,
+    body
   );
+
+  const result = await db.query(queryStr);
+  return result.rows[0];
+};
+
+exports.updateArticleVotes = async (article_id, inc_votes) => {
+  const queryStr = format(
+    `UPDATE articles
+     SET votes = votes + %L
+     WHERE article_id = %L
+     RETURNING *;`,
+    inc_votes,
+    article_id
+  );
+
+  const result = await db.query(queryStr);
   return result.rows[0];
 };
