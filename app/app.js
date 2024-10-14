@@ -36,3 +36,14 @@ app.use((req, res, next) => {
 app.use(errorHandler);
 
 module.exports = app;
+
+
+/* 
+*****************************************************************
+*                                                               *
+*                  TODO:                                        *
+*                                                               *
+*  - REFACTOR ERROR HANDLING, MOVE FROM CONTROLLERS TO MODELS   *
+*                                                               *
+*****************************************************************
+*/
