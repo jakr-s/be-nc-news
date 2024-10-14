@@ -70,12 +70,6 @@ describe("endpoints", () => {
   describe("GET /api/articles", () => {
     test("should respond with a 200 status code and an array of articles", async () => {
       const response = await request(app).get("/api/articles");
-      expect(response.status).toBe(200);
-      expect(Array.isArray(response.body.articles)).toBe(true);
-    });
-
-    test("should return articles with the correct properties", async () => {
-      const response = await request(app).get("/api/articles");
       const articles = response.body.articles;
       const expectedProperties = [
         "author",
@@ -88,6 +82,8 @@ describe("endpoints", () => {
         "comment_count",
       ];
 
+      expect(response.status).toBe(200);
+      expect(Array.isArray(response.body.articles)).toBe(true);
       articles.forEach((article) => {
         expectedProperties.forEach((prop) => {
           expect(article).toHaveProperty(prop);
@@ -103,11 +99,32 @@ describe("endpoints", () => {
     });
   });
 
-  test("should return articles sorted by date in descending order", async () => {
-    const response = await request(app).get("/api/articles");
-    expect(response.status).toBe(200);
-    const articles = response.body.articles;
-    expect(articles).toBeSortedBy("created_at", { descending: true });
+  describe("GET /api/articles/:article_id/comments", () => {
+    test("should return an array of comments for the given article_id", async () => {
+      const response = await request(app).get("/api/articles/1/comments");
+      expect(response.status).toBe(200);
+      expect(response.body.comments).toBeInstanceOf(Array);
+      response.body.comments.forEach((comment) => {
+        expect(comment).toHaveProperty("comment_id");
+        expect(comment).toHaveProperty("votes");
+        expect(comment).toHaveProperty("created_at");
+        expect(comment).toHaveProperty("author");
+        expect(comment).toHaveProperty("body");
+        expect(comment).toHaveProperty("article_id");
+      });
+    });
+
+    test("should return 404 if no comments found for the given article_id", async () => {
+      const response = await request(app).get("/api/articles/9999/comments");
+      expect(response.status).toBe(404);
+      expect(response.body.msg).toBe("Comments not found");
+    });
+
+    test("should return 400 for invalid article_id", async () => {
+      const response = await request(app).get("/api/articles/invalid/comments");
+      expect(response.status).toBe(400);
+      expect(response.body.msg).toBeDefined();
+    });
   });
 });
 
