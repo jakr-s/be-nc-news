@@ -23,9 +23,14 @@ describe("endpoints", () => {
       const response = await request(app).get("/api/topics");
       expect(response.status).toBe(200);
       expect(response.body.topics).toBeInstanceOf(Array);
+      expect(response.body.topics).toHaveLength(3);
       response.body.topics.forEach((topic) => {
-        expect(topic).toHaveProperty("slug");
-        expect(topic).toHaveProperty("description");
+        expect(topic).toEqual(
+          expect.objectContaining({
+            slug: expect.any(String),
+            description: expect.any(String),
+          })
+        );
       });
     });
   });
