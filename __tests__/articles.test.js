@@ -111,32 +111,34 @@ describe("/api/articles", () => {
       expect(body.articles).toBeSortedBy("created_at", { descending: true });
     });
 
-    test("should return articles sorted by any valid column", async () => {
-      const { body } = await request(app)
-        .get("/api/articles?sort_by=author")
-        .expect(200);
-      expect(body.articles).toBeSortedBy("author", { descending: true });
-    });
+    describe("Sort Queries", () => {
+      test("should return articles sorted by any valid column", async () => {
+        const { body } = await request(app)
+          .get("/api/articles?sort_by=author")
+          .expect(200);
+        expect(body.articles).toBeSortedBy("author", { descending: true });
+      });
 
-    test("should return articles in ascending order when order=asc", async () => {
-      const { body } = await request(app)
-        .get("/api/articles?order=asc")
-        .expect(200);
-      expect(body.articles).toBeSortedBy("created_at", { descending: false });
-    });
+      test("should return articles in ascending order when order=asc", async () => {
+        const { body } = await request(app)
+          .get("/api/articles?order=asc")
+          .expect(200);
+        expect(body.articles).toBeSortedBy("created_at", { descending: false });
+      });
 
-    test("should return 400 for invalid sort_by column", async () => {
-      const { body } = await request(app)
-        .get("/api/articles?sort_by=invalid_column")
-        .expect(400);
-      expect(body.msg).toBe("Invalid sort_by column");
-    });
+      test("should return 400 for invalid sort_by column", async () => {
+        const { body } = await request(app)
+          .get("/api/articles?sort_by=invalid_column")
+          .expect(400);
+        expect(body.msg).toBe("Invalid sort_by column");
+      });
 
-    test("should return 400 for invalid order value", async () => {
-      const { body } = await request(app)
-        .get("/api/articles?order=invalid_order")
-        .expect(400);
-      expect(body.msg).toBe("Invalid order value");
+      test("should return 400 for invalid order value", async () => {
+        const { body } = await request(app)
+          .get("/api/articles?order=invalid_order")
+          .expect(400);
+        expect(body.msg).toBe("Invalid order value");
+      });
     });
   });
 });
