@@ -28,10 +28,9 @@ describe("/api/articles/:article_id/comments", () => {
       });
     });
 
-    test("should return 404 if no comments found for the given article_id", async () => {
+    test("should return 204 if no comments found for a valid article_id", async () => {
       const response = await request(app).get("/api/articles/9999/comments");
-      expect(response.status).toBe(404);
-      expect(response.body.msg).toBe("Comments not found");
+      expect(response.status).toBe(204);
     });
 
     test("should return 400 for invalid article_id", async () => {

@@ -5,8 +5,8 @@ exports.getCommentsByArticleId = async (req, res, next) => {
   try {
     const { article_id } = req.params;
     const comments = await fetchCommentsByArticleId(article_id);
-    if (!comments.length) {
-      return next({ status: 404, msg: "Comments not found" });
+    if (comments.length === 0) {
+      res.status(204).send();
     }
     res.status(200).send({ comments });
   } catch (err) {
