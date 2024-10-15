@@ -24,12 +24,7 @@
         }
       ]
     },
-    "queries": [
-      "author",
-      "topic",
-      "sort_by",
-      "order"
-    ]
+    "queries": ["author", "topic", "sort_by", "order"]
   },
   "GET /api/articles/:article_id": {
     "description": "Retrieves the details of a specific article by its ID.",
