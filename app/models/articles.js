@@ -12,7 +12,6 @@ exports.fetchArticleById = async (article_id) => {
   return result.rows[0];
 };
 
-// Changes Start Here
 exports.fetchAllArticles = async (sort_by = "created_at", order = "desc") => {
   const validSortColumns = [
     "author",
@@ -57,7 +56,6 @@ exports.fetchAllArticles = async (sort_by = "created_at", order = "desc") => {
   const result = await db.query(queryStr);
   return result.rows;
 };
-// Changes End Here
 
 exports.fetchCommentsByArticleId = async (article_id) => {
   const queryStr = format(

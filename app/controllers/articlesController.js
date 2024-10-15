@@ -18,7 +18,7 @@ exports.getArticleById = async (req, res, next) => {
     next(err);
   }
 };
-//Changes Start Here
+
 exports.getAllArticles = async (req, res, next) => {
   const { sort_by = "created_at", order = "desc" } = req.query;
 
@@ -29,7 +29,7 @@ exports.getAllArticles = async (req, res, next) => {
     next(err);
   }
 };
-// Changes End here
+
 exports.addCommentToArticle = async (req, res, next) => {
   try {
     const { article_id } = req.params;
