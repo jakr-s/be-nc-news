@@ -3,11 +3,13 @@ const format = require("pg-format");
 
 exports.fetchArticleById = async (article_id) => {
   const queryStr = format(
-    `SELECT * FROM articles
-     WHERE article_id = %L;`,
+    `SELECT articles.*, COUNT(comments.comment_id) AS comment_count
+     FROM articles
+     LEFT JOIN comments ON comments.article_id = articles.article_id
+     WHERE articles.article_id = %L
+     GROUP BY articles.article_id;`,
     article_id
   );
-
   const result = await db.query(queryStr);
   return result.rows[0];
 };
