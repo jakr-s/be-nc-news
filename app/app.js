@@ -14,16 +14,18 @@
 
 const express = require("express");
 const app = express();
+const { getTopics } = require("./controllers/topicsController");
 const {
-  getTopics,
   getArticleById,
   getAllArticles,
-  getCommentsByArticleId,
   addCommentToArticle,
   patchArticleVotes,
-  getAllUsers,
-} = require("./controllers/controllers");
-const { deleteCommentById } = require("./controllers/controllers");
+} = require("./controllers/articlesController");
+const {
+  getCommentsByArticleId,
+  deleteCommentById,
+} = require("./controllers/commentsController");
+const { getAllUsers } = require("./controllers/usersController");
 const endpoints = require("../endpoints.json");
 const errorHandler = require("./middleware/errorHandler");
 

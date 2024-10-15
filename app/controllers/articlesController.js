@@ -1,4 +1,3 @@
-const { fetchTopics } = require("../models/topics");
 const {
   fetchArticleById,
   fetchAllArticles,
@@ -6,15 +5,6 @@ const {
   insertComment,
   updateArticleVotes,
 } = require("../models/articles");
-
-exports.getTopics = async (req, res, next) => {
-  try {
-    const topics = await fetchTopics();
-    res.status(200).send({ topics });
-  } catch (err) {
-    next(err);
-  }
-};
 
 exports.getArticleById = async (req, res, next) => {
   try {
@@ -35,19 +25,6 @@ exports.getAllArticles = async (req, res, next) => {
   try {
     const articles = await fetchAllArticles(sort_by, order);
     res.status(200).send({ articles });
-  } catch (err) {
-    next(err);
-  }
-};
-
-exports.getCommentsByArticleId = async (req, res, next) => {
-  try {
-    const { article_id } = req.params;
-    const comments = await fetchCommentsByArticleId(article_id);
-    if (!comments.length) {
-      return next({ status: 404, msg: "Comments not found" });
-    }
-    res.status(200).send({ comments });
   } catch (err) {
     next(err);
   }
@@ -77,30 +54,6 @@ exports.patchArticleVotes = async (req, res, next) => {
     const { inc_votes } = req.body;
     const updatedArticle = await updateArticleVotes(article_id, inc_votes);
     res.status(200).send({ article: updatedArticle });
-  } catch (err) {
-    // console.error(err);
-    next(err);
-  }
-};
-
-const { removeCommentById } = require("../models/comments");
-
-exports.deleteCommentById = async (req, res, next) => {
-  const { comment_id } = req.params;
-  try {
-    await removeCommentById(comment_id);
-    res.status(204).send();
-  } catch (err) {
-    next(err);
-  }
-};
-
-const { fetchAllUsers } = require("../models/users");
-
-exports.getAllUsers = async (req, res, next) => {
-  try {
-    const users = await fetchAllUsers();
-    res.status(200).send({ users });
   } catch (err) {
     next(err);
   }

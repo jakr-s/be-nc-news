@@ -12,8 +12,29 @@ exports.fetchArticleById = async (article_id) => {
   return result.rows[0];
 };
 
-exports.fetchAllArticles = async () => {
-  const result = await db.query(`
+exports.fetchAllArticles = async (sort_by = "created_at", order = "desc") => {
+  const validSortColumns = [
+    "author",
+    "title",
+    "article_id",
+    "topic",
+    "created_at",
+    "votes",
+    "article_img_url",
+    "comment_count",
+  ];
+  const validOrderValues = ["asc", "desc"];
+
+  if (!validSortColumns.includes(sort_by)) {
+    return Promise.reject({ status: 400, msg: "Invalid sort_by column" });
+  }
+
+  if (!validOrderValues.includes(order)) {
+    return Promise.reject({ status: 400, msg: "Invalid order value" });
+  }
+
+  const queryStr = format(
+    `
     SELECT 
       articles.author, 
       articles.title, 
@@ -26,8 +47,13 @@ exports.fetchAllArticles = async () => {
     FROM articles
     LEFT JOIN comments ON articles.article_id = comments.article_id
     GROUP BY articles.article_id
-    ORDER BY articles.created_at DESC;
-  `);
+    ORDER BY %I %s;
+    `,
+    sort_by,
+    order
+  );
+
+  const result = await db.query(queryStr);
   return result.rows;
 };
 
