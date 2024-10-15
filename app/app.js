@@ -25,7 +25,7 @@ const {
 } = require("./controllers/commentsController");
 const { getAllUsers } = require("./controllers/usersController");
 const endpoints = require("../endpoints.json");
-const errorHandler = require("./middleware/errorHandler");
+const { errorHandler } = require("./middleware/errorHandler");
 
 app.use(express.json());
 
