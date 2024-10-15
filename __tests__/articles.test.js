@@ -140,5 +140,23 @@ describe("/api/articles", () => {
         expect(body.msg).toBe("Invalid order value");
       });
     });
+
+    describe("Topic Queries", () => {
+      test("should return articles filtered by the specified topic", async () => {
+        const { body } = await request(app)
+          .get("/api/articles?topic=mitch")
+          .expect(200);
+        expect(body.articles).toBeInstanceOf(Array);
+        body.articles.forEach((article) => {
+          expect(article.topic).toBe("mitch");
+        });
+      });
+
+      test("should return 204 if no articles match the specified topic", async () => {
+        await request(app)
+          .get("/api/articles?topic=nonexistent_topic")
+          .expect(204);
+      });
+    });
   });
 });

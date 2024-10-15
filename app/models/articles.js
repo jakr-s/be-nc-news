@@ -12,7 +12,11 @@ exports.fetchArticleById = async (article_id) => {
   return result.rows[0];
 };
 
-exports.fetchAllArticles = async (sort_by = "created_at", order = "desc") => {
+exports.fetchAllArticles = async (
+  sort_by = "created_at",
+  order = "desc",
+  topic
+) => {
   const validSortColumns = [
     "author",
     "title",
@@ -33,8 +37,7 @@ exports.fetchAllArticles = async (sort_by = "created_at", order = "desc") => {
     return Promise.reject({ status: 400, msg: "Invalid order value" });
   }
 
-  const queryStr = format(
-    `
+  let queryStr = `
     SELECT 
       articles.author, 
       articles.title, 
@@ -46,14 +49,21 @@ exports.fetchAllArticles = async (sort_by = "created_at", order = "desc") => {
       COUNT(comments.comment_id) AS comment_count
     FROM articles
     LEFT JOIN comments ON articles.article_id = comments.article_id
-    GROUP BY articles.article_id
-    ORDER BY %I %s;
-    `,
+  `;
+
+  const queryParams = [];
+
+  if (topic) {
+    queryStr += format(` WHERE articles.topic = %L `, topic);
+  }
+
+  queryStr += format(
+    ` GROUP BY articles.article_id ORDER BY %I %s;`,
     sort_by,
     order
   );
 
-  const result = await db.query(queryStr);
+  const result = await db.query(queryStr, queryParams);
   return result.rows;
 };
 
