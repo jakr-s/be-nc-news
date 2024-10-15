@@ -1,4 +1,11 @@
 {
+  "DELETE /api/comments/:comment_id": {
+    "description": "Deletes a comment by its ID.",
+    "exampleResponse": {
+      "msg": "Comment deleted successfully"
+    },
+    "queries": []
+  },
   "GET /api": {
     "description": "serves up a json representation of all the available endpoints of the api"
   },
@@ -64,6 +71,24 @@
         {
           "description": "Footie!",
           "slug": "football"
+        }
+      ]
+    },
+    "queries": []
+  },
+  "GET /api/users": {
+    "description": "Retrieves an array of all users.",
+    "exampleResponse": {
+      "users": [
+        {
+          "avatar_url": "https://www.example.com/avatar/tickle122.jpg",
+          "name": "Tom Tickle",
+          "username": "tickle122"
+        },
+        {
+          "avatar_url": "https://www.example.com/avatar/grumpy19.jpg",
+          "name": "Paul Grump",
+          "username": "grumpy19"
         }
       ]
     },

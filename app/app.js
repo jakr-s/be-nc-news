@@ -1,3 +1,17 @@
+/*
+ *****************************************************************
+ *                                                               *
+ *                  TODO:                                        *
+ *                                                               *
+ *  - REFACTOR ERROR HANDLING, MOVE FROM CONTROLLERS TO MODELS   *
+ *                                                               *
+ *  - REORGANISE CONTROLLERS TO SEPARATE CONCERNS                *
+ *                                                               *
+ *  - REFACTOR REQUIRES TO USE INDEX FILE                        *
+ *                                                               *
+ *****************************************************************
+ */
+
 const express = require("express");
 const app = express();
 const {
@@ -7,6 +21,7 @@ const {
   getCommentsByArticleId,
   addCommentToArticle,
   patchArticleVotes,
+  getAllUsers,
 } = require("./controllers/controllers");
 const { deleteCommentById } = require("./controllers/controllers");
 const endpoints = require("../endpoints.json");
@@ -30,6 +45,8 @@ app.post("/api/articles/:article_id/comments", addCommentToArticle);
 
 app.delete("/api/comments/:comment_id", deleteCommentById);
 
+app.get("/api/users", getAllUsers);
+
 // Handle 404 for undefined routes
 app.use((req, res, next) => {
   res.status(404).send({ msg: "Resource not found" });
@@ -39,13 +56,3 @@ app.use((req, res, next) => {
 app.use(errorHandler);
 
 module.exports = app;
-
-/*
- *****************************************************************
- *                                                               *
- *                  TODO:                                        *
- *                                                               *
- *  - REFACTOR ERROR HANDLING, MOVE FROM CONTROLLERS TO MODELS   *
- *                                                               *
- *****************************************************************
- */
