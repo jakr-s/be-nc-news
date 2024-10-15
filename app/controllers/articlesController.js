@@ -1,7 +1,6 @@
 const {
   fetchArticleById,
   fetchAllArticles,
-  fetchCommentsByArticleId,
   insertComment,
   updateArticleVotes,
 } = require("../models/articles");

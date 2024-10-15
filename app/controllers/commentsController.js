@@ -1,7 +1,4 @@
-const {
-  fetchCommentsByArticleId,
-  insertComment,
-} = require("../models/articles");
+const { fetchCommentsByArticleId } = require("../models/articles");
 const { removeCommentById } = require("../models/comments");
 
 exports.getCommentsByArticleId = async (req, res, next) => {
