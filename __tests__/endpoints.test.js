@@ -248,6 +248,22 @@ describe("endpoints", () => {
       expect(response.body.msg).toBe("Bad Request");
     });
   });
+
+  describe("GET /api/users", () => {
+    test("200: responds with an array of users", async () => {
+      const { body } = await request(app).get("/api/users").expect(200);
+      expect(body.users).toBeInstanceOf(Array);
+      body.users.forEach((user) => {
+        expect(user).toEqual(
+          expect.objectContaining({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          })
+        );
+      });
+    });
+  });
 });
 
 describe("error handling middleware", () => {
