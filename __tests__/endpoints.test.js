@@ -228,6 +228,26 @@ describe("endpoints", () => {
       });
     });
   });
+
+  describe("DELETE /api/comments/:comment_id", () => {
+    test("should delete the given comment and respond with 204", async () => {
+      const response = await request(app).delete("/api/comments/1");
+      expect(response.status).toBe(204);
+      expect(response.body).toEqual({});
+    });
+
+    test("should return 404 for non-existent comment_id", async () => {
+      const response = await request(app).delete("/api/comments/9999");
+      expect(response.status).toBe(404);
+      expect(response.body.msg).toBe("Comment not found");
+    });
+
+    test("should return 400 for invalid comment_id", async () => {
+      const response = await request(app).delete("/api/comments/invalid");
+      expect(response.status).toBe(400);
+      expect(response.body.msg).toBe("Bad Request");
+    });
+  });
 });
 
 describe("error handling middleware", () => {

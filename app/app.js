@@ -8,6 +8,7 @@ const {
   addCommentToArticle,
   patchArticleVotes,
 } = require("./controllers/controllers");
+const { deleteCommentById } = require("./controllers/controllers");
 const endpoints = require("../endpoints.json");
 const errorHandler = require("./middleware/errorHandler");
 
@@ -26,6 +27,8 @@ app.patch("/api/articles/:article_id", patchArticleVotes);
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 app.post("/api/articles/:article_id/comments", addCommentToArticle);
+
+app.delete("/api/comments/:comment_id", deleteCommentById);
 
 // Handle 404 for undefined routes
 app.use((req, res, next) => {

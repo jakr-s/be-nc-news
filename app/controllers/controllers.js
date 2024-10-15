@@ -80,3 +80,15 @@ exports.patchArticleVotes = async (req, res, next) => {
     next(err);
   }
 };
+
+const { removeCommentById } = require("../models/comments");
+
+exports.deleteCommentById = async (req, res, next) => {
+  const { comment_id } = req.params;
+  try {
+    await removeCommentById(comment_id);
+    res.status(204).send();
+  } catch (err) {
+    next(err);
+  }
+};
