@@ -9,7 +9,6 @@ const errorHandler = (err, req, res, next) => {
     return next();
   }
 
-  // console.error(err)
   res.status(500).send({ msg: "Internal Server Error" });
   return next();
 };
