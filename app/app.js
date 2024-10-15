@@ -5,8 +5,6 @@
  *                                                               *
  *  - REFACTOR ERROR HANDLING, MOVE FROM CONTROLLERS TO MODELS   *
  *                                                               *
- *  - REORGANISE CONTROLLERS TO SEPARATE CONCERNS                *
- *                                                               *
  *  - REFACTOR REQUIRES TO USE INDEX FILE                        *
  *                                                               *
  *****************************************************************
