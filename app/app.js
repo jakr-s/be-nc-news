@@ -6,7 +6,7 @@ const {
   getAllArticles,
   getCommentsByArticleId,
   addCommentToArticle,
-  updateArticleVotes,
+  patchArticleVotes,
 } = require("./controllers/controllers");
 const endpoints = require("../endpoints.json");
 const errorHandler = require("./middleware/errorHandler");
@@ -22,7 +22,7 @@ app.get("/api/topics", getTopics);
 app.get("/api/articles", getAllArticles);
 
 app.get("/api/articles/:article_id", getArticleById);
-app.patch("/api/articles/:article_id", updateArticleVotes);
+app.patch("/api/articles/:article_id", patchArticleVotes);
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 app.post("/api/articles/:article_id/comments", addCommentToArticle);

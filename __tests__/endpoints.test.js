@@ -93,7 +93,7 @@ describe("endpoints", () => {
           .patch("/api/articles/1")
           .send({ inc_votes: "not-an-integer" })
           .expect(400);
-        expect(body.msg).toBe("Bad request: inc_votes must be an integer");
+        expect(body.msg).toBe("Bad Request");
       });
 
       test("should return 404 with an error when article_id does not exist", async () => {

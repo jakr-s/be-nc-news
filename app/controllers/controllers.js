@@ -55,16 +55,13 @@ exports.addCommentToArticle = async (req, res, next) => {
   try {
     const { article_id } = req.params;
     const { username, body } = req.body;
-
     if (!username || !body) {
       return next({ status: 400, msg: "Bad request: missing required fields" });
     }
-
     const article = await fetchArticleById(article_id);
     if (!article) {
       return next({ status: 404, msg: "Article not found" });
     }
-
     const comment = await insertComment(article_id, username, body);
     res.status(201).send({ comment });
   } catch (err) {
@@ -72,25 +69,14 @@ exports.addCommentToArticle = async (req, res, next) => {
   }
 };
 
-exports.updateArticleVotes = async (req, res, next) => {
+exports.patchArticleVotes = async (req, res, next) => {
   try {
     const { article_id } = req.params;
     const { inc_votes } = req.body;
-
-    if (!Number.isInteger(inc_votes)) {
-      return next({
-        status: 400,
-        msg: "Bad request: inc_votes must be an integer",
-      });
-    }
-
     const updatedArticle = await updateArticleVotes(article_id, inc_votes);
-    if (!updatedArticle) {
-      return next({ status: 404, msg: "Article not found" });
-    }
-
     res.status(200).send({ article: updatedArticle });
   } catch (err) {
+    // console.error(err);
     next(err);
   }
 };
