@@ -1,30 +1,12 @@
-/*
- *****************************************************************
- *                                                               *
- *                  TODO:                                        *
- *                                                               *
- *  - REFACTOR ERROR HANDLING, MOVE FROM CONTROLLERS TO MODELS   *
- *                                                               *
- *  - REFACTOR REQUIRES TO USE INDEX FILE                        *
- *                                                               *
- *****************************************************************
- */
-
 const express = require("express");
 const app = express();
-const { getTopics } = require("./controllers/topicsController");
-const {
-  getArticleById,
-  getAllArticles,
-  addCommentToArticle,
-  patchArticleVotes,
-} = require("./controllers/articlesController");
-const {
-  getCommentsByArticleId,
-  deleteCommentById,
-} = require("./controllers/commentsController");
-const { getAllUsers } = require("./controllers/usersController");
+
+const articlesRouter = require("./routers/articlesRouter");
+const commentsRouter = require("./routers/commentsRouter");
+const topicsRouter = require("./routers/topicsRouter");
+const usersRouter = require("./routers/usersRouter");
 const endpoints = require("../endpoints.json");
+
 const { errorHandler } = require("./middleware/errorHandler");
 
 app.use(express.json());
@@ -33,19 +15,10 @@ app.get("/api", (req, res) => {
   res.status(200).send(endpoints);
 });
 
-app.get("/api/topics", getTopics);
-
-app.get("/api/articles", getAllArticles);
-
-app.get("/api/articles/:article_id", getArticleById);
-app.patch("/api/articles/:article_id", patchArticleVotes);
-
-app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
-app.post("/api/articles/:article_id/comments", addCommentToArticle);
-
-app.delete("/api/comments/:comment_id", deleteCommentById);
-
-app.get("/api/users", getAllUsers);
+app.use("/api/topics", topicsRouter);
+app.use("/api/articles", articlesRouter);
+app.use("/api/comments", commentsRouter);
+app.use("/api/users", usersRouter);
 
 // Handle 404 for undefined routes
 app.use((req, res, next) => {
