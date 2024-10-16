@@ -34,12 +34,12 @@
     "url": "git+https://github.com/northcoders/be-nc-news.git"
   },
   "scripts": {
-    "dev": "nodemon app/listen.js",
+    "dev": "nodemon listen.js",
     "prepare": "husky install",
     "seed": "node ./db/seeds/run-seed.js",
     "setup-dbs": "psql -f ./db/setup.sql",
     "test": "jest",
-    "start": "node app/listen.js",
+    "start": "node listen.js",
     "seed-prod": "NODE_ENV=production npm run seed"
   },
   "version": "1.0.0"
