@@ -39,7 +39,7 @@
     "seed": "node ./db/seeds/run-seed.js",
     "setup-dbs": "psql -f ./db/setup.sql",
     "test": "jest",
-    "start": "node listen.js",
+    "start": "node app/listen.js",
     "seed-prod": "NODE_ENV=production npm run seed"
   },
   "version": "1.0.0"
