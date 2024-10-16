@@ -56,14 +56,11 @@ exports.fetchAllArticles = async (
   const queryParams = [];
 
   if (topic) {
-    queryStr += format(` WHERE articles.topic = %L `, topic);
+    queryStr += ` WHERE articles.topic = $1 `;
+    queryParams.push(topic);
   }
 
-  queryStr += format(
-    ` GROUP BY articles.article_id ORDER BY %I %s;`,
-    sort_by,
-    order
-  );
+  queryStr += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order};`;
 
   const result = await db.query(queryStr, queryParams);
   return result.rows;
