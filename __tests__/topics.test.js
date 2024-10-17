@@ -40,8 +40,17 @@ describe("/api/topics", () => {
           description: "A new topic description",
         })
       );
-    });
 
+      const getResponse = await request(app).get("/api/topics");
+      const topics = getResponse.body.topics;
+      const addedTopic = topics.find((topic) => topic.slug === "new_topic");
+      expect(addedTopic).toEqual(
+        expect.objectContaining({
+          slug: "new_topic",
+          description: "A new topic description",
+        })
+      );
+    });
     test("should return 400 for missing required fields", async () => {
       const response = await request(app).post("/api/topics").send({});
       expect(response.status).toBe(400);
