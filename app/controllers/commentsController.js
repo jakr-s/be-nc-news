@@ -1,5 +1,5 @@
 const { fetchCommentsByArticleId } = require("../models/articles");
-const { removeCommentById } = require("../models/comments");
+const { removeCommentById, updateCommentVotes } = require("../models/comments");
 
 exports.getCommentsByArticleId = async (req, res, next) => {
   try {
@@ -19,6 +19,20 @@ exports.deleteCommentById = async (req, res, next) => {
   try {
     await removeCommentById(comment_id);
     res.status(204).send();
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.patchCommentVotes = async (req, res, next) => {
+  try {
+    const { comment_id } = req.params;
+    const { inc_votes } = req.body;
+    if (typeof inc_votes !== 'number') {
+      throw { status: 400, msg: "Bad request: inc_votes must be a number" };
+    }
+    const updatedComment = await updateCommentVotes(comment_id, inc_votes);
+    res.status(200).send({ comment: updatedComment });
   } catch (err) {
     next(err);
   }
