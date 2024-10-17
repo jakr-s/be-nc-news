@@ -95,21 +95,47 @@ exports.fetchAllArticles = async (
 
   return {
     articles: articlesResult.rows,
-    total_count: parseInt(totalCountResult.rows[0].total_count, 10),
+    total_count: Number(totalCountResult.rows[0].total_count),
   };
 };
 
-exports.fetchCommentsByArticleId = async (article_id) => {
+exports.fetchCommentsByArticleId = async (article_id, limit = 10, p = 1) => {
+  if (isNaN(limit) || limit < 1) {
+    return Promise.reject({ status: 400, msg: "Invalid limit value" });
+  }
+
+  if (isNaN(p) || p < 1) {
+    return Promise.reject({ status: 400, msg: "Invalid page value" });
+  }
+
+  const offset = (p - 1) * limit;
+
   const queryStr = format(
     `SELECT comment_id, votes, created_at, author, body, article_id
      FROM comments
      WHERE article_id = %L
-     ORDER BY created_at DESC;`,
+     ORDER BY created_at DESC
+     LIMIT %L OFFSET %L;`,
+    article_id,
+    limit,
+    offset
+  );
+
+  const commentsResult = await db.query(queryStr);
+
+  const totalCountQueryStr = format(
+    `SELECT COUNT(*) AS total_count
+     FROM comments
+     WHERE article_id = %L;`,
     article_id
   );
 
-  const result = await db.query(queryStr);
-  return result.rows;
+  const totalCountResult = await db.query(totalCountQueryStr);
+
+  return {
+    comments: commentsResult.rows,
+    total_count: Number(totalCountResult.rows[0].total_count),
+  };
 };
 
 exports.insertComment = async (article_id, username, body) => {

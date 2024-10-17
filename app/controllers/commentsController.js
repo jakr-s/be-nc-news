@@ -4,11 +4,17 @@ const { removeCommentById, updateCommentVotes } = require("../models/comments");
 exports.getCommentsByArticleId = async (req, res, next) => {
   try {
     const { article_id } = req.params;
-    const comments = await fetchCommentsByArticleId(article_id);
+    const { limit, p } = req.query;
+    const { comments, total_count } = await fetchCommentsByArticleId(
+      article_id,
+      limit,
+      p
+    );
     if (comments.length === 0) {
       res.status(204).send();
+    } else {
+      res.status(200).send({ comments, total_count });
     }
-    res.status(200).send({ comments });
   } catch (err) {
     next(err);
   }
@@ -28,7 +34,7 @@ exports.patchCommentVotes = async (req, res, next) => {
   try {
     const { comment_id } = req.params;
     const { inc_votes } = req.body;
-    if (typeof inc_votes !== 'number') {
+    if (typeof inc_votes !== "number") {
       throw { status: 400, msg: "Bad request: inc_votes must be a number" };
     }
     const updatedComment = await updateCommentVotes(comment_id, inc_votes);
