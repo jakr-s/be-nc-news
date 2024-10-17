@@ -166,7 +166,7 @@ describe("/api/articles", () => {
         expect(response.status).toBe(200);
         expect(response.body.articles).toBeInstanceOf(Array);
         expect(response.body.articles).toHaveLength(5);
-        // expect(response.body.total_count).toBeGreaterThan(5);
+        expect(response.body.total_count).toBeGreaterThan(5);
       });
 
       test("should return 400 for invalid limit", async () => {
@@ -255,6 +255,34 @@ describe("/api/articles/:article_id/comments", () => {
       const response = await request(app).get("/api/articles/invalid/comments");
       expect(response.status).toBe(400);
       expect(response.body.msg).toBe("Bad Request");
+    });
+
+    describe("Pagination Queries", () => {
+      test("should return paginated comments with total_count", async () => {
+        const response = await request(app).get(
+          "/api/articles/1/comments?limit=5&p=2"
+        );
+        expect(response.status).toBe(200);
+        expect(response.body.comments).toBeInstanceOf(Array);
+        expect(response.body.comments).toHaveLength(5);
+        expect(response.body.total_count).toBeGreaterThan(5);
+      });
+
+      test("should return 400 for invalid limit", async () => {
+        const response = await request(app).get(
+          "/api/articles/1/comments?limit=invalid"
+        );
+        expect(response.status).toBe(400);
+        expect(response.body.msg).toBe("Invalid limit value");
+      });
+
+      test("should return 400 for invalid page", async () => {
+        const response = await request(app).get(
+          "/api/articles/1/comments?p=invalid"
+        );
+        expect(response.status).toBe(400);
+        expect(response.body.msg).toBe("Invalid page value");
+      });
     });
   });
 
