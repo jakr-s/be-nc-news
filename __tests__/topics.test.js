@@ -25,4 +25,36 @@ describe("/api/topics", () => {
       });
     });
   });
+
+  describe("POST", () => {
+    test("should add a new topic and return it", async () => {
+      const newTopic = {
+        slug: "new_topic",
+        description: "A new topic description",
+      };
+      const response = await request(app).post("/api/topics").send(newTopic);
+      expect(response.status).toBe(201);
+      expect(response.body.topic).toEqual(
+        expect.objectContaining({
+          slug: "new_topic",
+          description: "A new topic description",
+        })
+      );
+
+      const getResponse = await request(app).get("/api/topics");
+      const topics = getResponse.body.topics;
+      const addedTopic = topics.find((topic) => topic.slug === "new_topic");
+      expect(addedTopic).toEqual(
+        expect.objectContaining({
+          slug: "new_topic",
+          description: "A new topic description",
+        })
+      );
+    });
+    test("should return 400 for missing required fields", async () => {
+      const response = await request(app).post("/api/topics").send({});
+      expect(response.status).toBe(400);
+      expect(response.body.msg).toBe("Bad request: missing required fields");
+    });
+  });
 });
