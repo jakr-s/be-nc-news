@@ -158,6 +158,46 @@ describe("/api/articles", () => {
       });
     });
   });
+
+  describe("POST", () => {
+    test("should add a new article and respond with the newly added article", async () => {
+      const newArticle = {
+        author: "butter_bridge",
+        title: "New Article",
+        body: "This is the body of the new article.",
+        topic: "mitch",
+        article_img_url: "https://example.com/image.jpg",
+      };
+
+      const response = await request(app)
+        .post("/api/articles")
+        .send(newArticle);
+
+      expect(response.status).toBe(201);
+      expect(response.body.article).toEqual({
+        author: "butter_bridge",
+        title: "New Article",
+        body: "This is the body of the new article.",
+        topic: "mitch",
+        article_img_url: "https://example.com/image.jpg",
+        votes: 0,
+        comment_count: 0,
+        created_at: expect.any(String),
+        article_id: expect.any(Number),
+      });
+    });
+  });
+
+  test("should return 400 if required fields are missing", async () => {
+    const newArticle = {
+      author: "butter_bridge",
+      title: "New Article",
+      body: "This is the body of the new article.",
+    };
+    const response = await request(app).post("/api/articles").send(newArticle);
+    expect(response.status).toBe(400);
+    expect(response.body.msg).toBe("Bad request: missing required fields");
+  });
 });
 
 describe("/api/articles/:article_id/comments", () => {
