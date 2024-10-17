@@ -200,3 +200,25 @@ exports.insertArticle = async ({
 
   return article;
 };
+
+exports.removeArticleById = async (article_id) => {
+  const deleteCommentsQuery = format(
+    `DELETE FROM comments
+     WHERE article_id = %L;`,
+    article_id
+  );
+
+  await db.query(deleteCommentsQuery);
+
+  const deleteArticleQuery = format(
+    `DELETE FROM articles
+     WHERE article_id = %L
+     RETURNING *;`,
+    article_id
+  );
+
+  const result = await db.query(deleteArticleQuery);
+  if (result.rows.length === 0) {
+    return Promise.reject({ status: 404, msg: "Article not found" });
+  }
+};

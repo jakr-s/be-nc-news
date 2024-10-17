@@ -5,19 +5,19 @@ const {
   addCommentToArticle,
   patchArticleVotes,
   addArticle,
+  deleteArticleById,
 } = require("../controllers/articlesController");
 const { getCommentsByArticleId } = require("../controllers/commentsController");
 
 const articlesRouter = express.Router();
 
-articlesRouter.route("/")
-  .get(getAllArticles)
-  .post(addArticle);
+articlesRouter.route("/").get(getAllArticles).post(addArticle);
 
 articlesRouter
   .route("/:article_id")
   .get(getArticleById)
-  .patch(patchArticleVotes);
+  .patch(patchArticleVotes)
+  .delete(deleteArticleById);
 
 articlesRouter
   .route("/:article_id/comments")

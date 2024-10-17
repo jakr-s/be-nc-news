@@ -8,8 +8,6 @@ const db = require("../db/connection.js");
 beforeEach(() => seed(data));
 afterAll(() => db.end());
 
-
-
 describe("/api/comments/:comment_id", () => {
   describe("DELETE", () => {
     test("should delete the given comment and respond with 204", async () => {
