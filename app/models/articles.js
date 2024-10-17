@@ -60,8 +60,7 @@ exports.fetchAllArticles = async (
       articles.created_at, 
       articles.votes, 
       articles.article_img_url,
-      COUNT(comments.comment_id) AS comment_count,
-      COUNT(*) OVER() AS total_count
+      COUNT(comments.comment_id) AS comment_count
     FROM articles
     LEFT JOIN comments ON articles.article_id = comments.article_id
   `;
@@ -78,10 +77,25 @@ exports.fetchAllArticles = async (
   } OFFSET $${queryParams.length + 2};`;
   queryParams.push(limit, offset);
 
-  const result = await db.query(queryStr, queryParams);
+  const articlesResult = await db.query(queryStr, queryParams);
+
+  let totalCountQueryStr = `
+    SELECT COUNT(*) AS total_count
+    FROM articles
+  `;
+
+  if (topic) {
+    totalCountQueryStr += ` WHERE articles.topic = $1 `;
+  }
+
+  const totalCountResult = await db.query(
+    totalCountQueryStr,
+    topic ? [topic] : []
+  );
+
   return {
-    articles: result.rows,
-    total_count: result.rows.length ? result.rows[0].total_count : 0,
+    articles: articlesResult.rows,
+    total_count: parseInt(totalCountResult.rows[0].total_count, 10),
   };
 };
 
