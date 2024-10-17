@@ -73,6 +73,49 @@ describe("/api/articles/:article_id", () => {
       expect(body.msg).toBe("Article not found");
     });
   });
+
+  describe("DELETE", () => {
+    test("should delete an article and its comments, responding with 204", async () => {
+      const response = await request(app).delete("/api/articles/1");
+      expect(response.status).toBe(204);
+
+      const articleResponse = await request(app).get("/api/articles/1");
+      expect(articleResponse.status).toBe(404);
+
+      const commentsResponse = await request(app).get(
+        "/api/articles/1/comments"
+      );
+      expect(commentsResponse.status).toBe(204);
+    });
+
+    test("should ensure the article and its comments no longer exist in the database", async () => {
+      await request(app).delete("/api/articles/1").expect(204);
+
+      const articleCheck = await db.query(
+        "SELECT * FROM articles WHERE article_id = $1",
+        [1]
+      );
+      expect(articleCheck.rows.length).toBe(0);
+
+      const commentsCheck = await db.query(
+        "SELECT * FROM comments WHERE article_id = $1",
+        [1]
+      );
+      expect(commentsCheck.rows.length).toBe(0);
+    });
+
+    test("should return 404 for non-existent article_id", async () => {
+      const response = await request(app).delete("/api/articles/9999");
+      expect(response.status).toBe(404);
+      expect(response.body.msg).toBe("Article not found");
+    });
+
+    test("should return 400 for invalid article_id", async () => {
+      const response = await request(app).delete("/api/articles/invalid");
+      expect(response.status).toBe(400);
+      expect(response.body.msg).toBeDefined();
+    });
+  });
 });
 
 describe("/api/articles", () => {
