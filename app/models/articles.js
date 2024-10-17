@@ -110,3 +110,34 @@ exports.updateArticleVotes = async (article_id, inc_votes) => {
 
   return result.rows[0];
 };
+
+exports.insertArticle = async ({
+  author,
+  title,
+  body,
+  topic,
+  article_img_url,
+}) => {
+  const queryStr = format(
+    `INSERT INTO articles (author, title, body, topic, article_img_url)
+     VALUES (%L, %L, %L, %L, COALESCE(%L, 'default_image_url'))
+     RETURNING *`,
+    author,
+    title,
+    body,
+    topic,
+    article_img_url
+  );
+
+  const result = await db.query(queryStr);
+  const article = result.rows[0];
+
+  const commentCountQueryStr = format(
+    `SELECT COUNT(*)::int AS comment_count FROM comments WHERE article_id = %L`,
+    article.article_id
+  );
+  const commentCountResult = await db.query(commentCountQueryStr);
+  article.comment_count = commentCountResult.rows[0].comment_count;
+
+  return article;
+};
