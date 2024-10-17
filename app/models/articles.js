@@ -17,7 +17,9 @@ exports.fetchArticleById = async (article_id) => {
 exports.fetchAllArticles = async (
   sort_by = "created_at",
   order = "desc",
-  topic
+  topic,
+  limit = 10,
+  p = 1
 ) => {
   const validSortColumns = [
     "author",
@@ -38,6 +40,16 @@ exports.fetchAllArticles = async (
   if (!validOrderValues.includes(order)) {
     return Promise.reject({ status: 400, msg: "Invalid order value" });
   }
+
+  if (isNaN(limit) || limit < 1) {
+    return Promise.reject({ status: 400, msg: "Invalid limit value" });
+  }
+
+  if (isNaN(p) || p < 1) {
+    return Promise.reject({ status: 400, msg: "Invalid page value" });
+  }
+
+  const offset = (p - 1) * limit;
 
   let queryStr = `
     SELECT 
@@ -60,10 +72,31 @@ exports.fetchAllArticles = async (
     queryParams.push(topic);
   }
 
-  queryStr += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order};`;
+  queryStr += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order} LIMIT $${
+    queryParams.length + 1
+  } OFFSET $${queryParams.length + 2};`;
+  queryParams.push(limit, offset);
 
-  const result = await db.query(queryStr, queryParams);
-  return result.rows;
+  const articlesResult = await db.query(queryStr, queryParams);
+
+  let totalCountQueryStr = `
+    SELECT COUNT(*) AS total_count
+    FROM articles
+  `;
+
+  if (topic) {
+    totalCountQueryStr += ` WHERE articles.topic = $1 `;
+  }
+
+  const totalCountResult = await db.query(
+    totalCountQueryStr,
+    topic ? [topic] : []
+  );
+
+  return {
+    articles: articlesResult.rows,
+    total_count: parseInt(totalCountResult.rows[0].total_count, 10),
+  };
 };
 
 exports.fetchCommentsByArticleId = async (article_id) => {

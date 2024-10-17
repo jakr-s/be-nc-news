@@ -3,7 +3,7 @@ const {
   fetchAllArticles,
   insertComment,
   updateArticleVotes,
-  insertArticle
+  insertArticle,
 } = require("../models/articles");
 
 exports.getArticleById = async (req, res, next) => {
@@ -20,14 +20,16 @@ exports.getArticleById = async (req, res, next) => {
 };
 
 exports.getAllArticles = async (req, res, next) => {
-  const { sort_by = "created_at", order = "desc", topic } = req.query;
-
   try {
-    const articles = await fetchAllArticles(sort_by, order, topic);
-    if (articles.length === 0) {
-      return res.status(204).send();
-    }
-    res.status(200).send({ articles });
+    const { sort_by, order, topic, limit, p } = req.query;
+    const { articles, total_count } = await fetchAllArticles(
+      sort_by,
+      order,
+      topic,
+      limit,
+      p
+    );
+    res.status(200).send({ articles, total_count });
   } catch (err) {
     next(err);
   }
@@ -68,7 +70,13 @@ exports.addArticle = async (req, res, next) => {
     if (!author || !title || !body || !topic) {
       return next({ status: 400, msg: "Bad request: missing required fields" });
     }
-    const article = await insertArticle({ author, title, body, topic, article_img_url });
+    const article = await insertArticle({
+      author,
+      title,
+      body,
+      topic,
+      article_img_url,
+    });
     res.status(201).send({ article });
   } catch (err) {
     next(err);
