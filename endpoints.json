@@ -2,7 +2,6 @@
   "GET /api": {
     "description": "serves up a json representation of all the available endpoints of the api"
   },
-
   "GET /api/topics": {
     "description": "serves an array of all topics",
     "exampleResponse": {
@@ -15,7 +14,6 @@
     },
     "queries": []
   },
-
   "GET /api/articles": {
     "description": "serves an array of all articles",
     "exampleResponse": {
@@ -31,9 +29,8 @@
         }
       ]
     },
-    "queries": ["author", "topic", "sort_by", "order"]
+    "queries": ["author", "topic", "sort_by", "order", "limit", "p"]
   },
-
   "GET /api/articles/:article_id": {
     "description": "Retrieves the details of a specific article by its ID.",
     "exampleResponse": {
@@ -50,7 +47,6 @@
     },
     "queries": []
   },
-
   "PATCH /api/articles/:article_id": {
     "description": "Updates the vote count of a specific article by its ID.",
     "exampleRequest": {
@@ -69,7 +65,6 @@
       }
     }
   },
-
   "GET /api/articles/:article_id/comments": {
     "description": "Retrieves an array of comments for the given article ID.",
     "exampleResponse": {
@@ -85,9 +80,8 @@
         "...rest"
       ]
     },
-    "queries": []
+    "queries": ["limit", "p"]
   },
-
   "POST /api/articles/:article_id/comments": {
     "description": "Adds a new comment to the specified article.",
     "exampleRequest": {
@@ -105,7 +99,6 @@
       }
     }
   },
-
   "DELETE /api/comments/:comment_id": {
     "description": "Deletes a comment by its ID.",
     "exampleResponse": {
@@ -113,7 +106,64 @@
     },
     "queries": []
   },
-
+  "PATCH /api/comments/:comment_id": {
+    "description": "Updates the vote count of a specific comment by its ID.",
+    "exampleRequest": {
+      "inc_votes": 1
+    },
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 1,
+        "article_id": 5,
+        "author": "icellusedkars",
+        "body": "What do you see? I have no idea where this will lead us. This place I speak of, is known as the Black Lodge.",
+        "created_at": "2020-07-09T20:11:00.000Z",
+        "votes": 17
+      }
+    }
+  },
+  "POST /api/articles": {
+    "description": "Adds a new article.",
+    "exampleRequest": {
+      "author": "butter_bridge",
+      "title": "New Article",
+      "body": "This is the body of the new article.",
+      "topic": "mitch",
+      "article_img_url": "https://example.com/image.jpg"
+    },
+    "exampleResponse": {
+      "article": {
+        "article_id": 2,
+        "author": "butter_bridge",
+        "title": "New Article",
+        "body": "This is the body of the new article.",
+        "topic": "mitch",
+        "article_img_url": "https://example.com/image.jpg",
+        "created_at": "2023-10-05T14:48:00.000Z",
+        "votes": 0
+      }
+    }
+  },
+  "POST /api/topics": {
+    "description": "Adds a new topic.",
+    "exampleRequest": {
+      "slug": "new_topic",
+      "description": "This is a new topic."
+    },
+    "exampleResponse": {
+      "topic": {
+        "slug": "new_topic",
+        "description": "This is a new topic."
+      }
+    }
+  },
+  "DELETE /api/articles/:article_id": {
+    "description": "Deletes an article by its ID.",
+    "exampleResponse": {
+      "msg": "Article deleted successfully"
+    },
+    "queries": []
+  },
   "GET /api/users": {
     "description": "Retrieves an array of all users.",
     "exampleResponse": {
@@ -132,7 +182,6 @@
     },
     "queries": []
   },
-
   "GET /api/users/:username": {
     "description": "Retrieves the details of a specific user by their username.",
     "exampleResponse": {
