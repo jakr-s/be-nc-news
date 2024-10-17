@@ -31,8 +31,18 @@ app.use(errorHandler);
 module.exports = app;
 
 /**
- * TODO: Implement null return to models
+ * TODO
+ *
+ * Implement null return to models
  * - Ensure that all model functions return null when no data is found
  * - Update relevant tests to check for null returns
  * - Refactor controllers to handle null returns appropriately
+ *
+ * Add new endpoints to endpoints.json
+ * - PATCH /api/comments/:comment_id
+ * - POST /api/articles
+ * - GET /api/articles (pagination)
+ * - GET /api/articles/:article_id/comments (pagination)
+ * - POST /api/topics
+ * - DELETE /api/articles/:article_id
  */
