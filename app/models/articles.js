@@ -17,7 +17,9 @@ exports.fetchArticleById = async (article_id) => {
 exports.fetchAllArticles = async (
   sort_by = "created_at",
   order = "desc",
-  topic
+  topic,
+  limit = 10,
+  p = 1
 ) => {
   const validSortColumns = [
     "author",
@@ -39,6 +41,16 @@ exports.fetchAllArticles = async (
     return Promise.reject({ status: 400, msg: "Invalid order value" });
   }
 
+  if (isNaN(limit) || limit < 1) {
+    return Promise.reject({ status: 400, msg: "Invalid limit value" });
+  }
+
+  if (isNaN(p) || p < 1) {
+    return Promise.reject({ status: 400, msg: "Invalid page value" });
+  }
+
+  const offset = (p - 1) * limit;
+
   let queryStr = `
     SELECT 
       articles.author, 
@@ -48,7 +60,8 @@ exports.fetchAllArticles = async (
       articles.created_at, 
       articles.votes, 
       articles.article_img_url,
-      COUNT(comments.comment_id) AS comment_count
+      COUNT(comments.comment_id) AS comment_count,
+      COUNT(*) OVER() AS total_count
     FROM articles
     LEFT JOIN comments ON articles.article_id = comments.article_id
   `;
@@ -60,10 +73,16 @@ exports.fetchAllArticles = async (
     queryParams.push(topic);
   }
 
-  queryStr += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order};`;
+  queryStr += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order} LIMIT $${
+    queryParams.length + 1
+  } OFFSET $${queryParams.length + 2};`;
+  queryParams.push(limit, offset);
 
   const result = await db.query(queryStr, queryParams);
-  return result.rows;
+  return {
+    articles: result.rows,
+    total_count: result.rows.length ? result.rows[0].total_count : 0,
+  };
 };
 
 exports.fetchCommentsByArticleId = async (article_id) => {

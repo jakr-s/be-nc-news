@@ -151,10 +151,34 @@ describe("/api/articles", () => {
         });
       });
 
-      test("should return 204 if no articles match the specified topic", async () => {
-        await request(app)
+      test("should return 200 and an empty array if no articles match the specified topic", async () => {
+        const { body } = await request(app)
           .get("/api/articles?topic=nonexistent_topic")
-          .expect(204);
+          .expect(200);
+        expect(body.articles).toBeInstanceOf(Array);
+        expect(body.articles).toEqual([]);
+      });
+    });
+
+    describe("Pagination Queries", () => {
+      test("should return paginated articles with total_count", async () => {
+        const response = await request(app).get("/api/articles?limit=5&p=2");
+        expect(response.status).toBe(200);
+        expect(response.body.articles).toBeInstanceOf(Array);
+        expect(response.body.articles).toHaveLength(5);
+        // expect(response.body.total_count).toBeGreaterThan(5);
+      });
+
+      test("should return 400 for invalid limit", async () => {
+        const response = await request(app).get("/api/articles?limit=invalid");
+        expect(response.status).toBe(400);
+        expect(response.body.msg).toBe("Invalid limit value");
+      });
+
+      test("should return 400 for invalid page", async () => {
+        const response = await request(app).get("/api/articles?p=invalid");
+        expect(response.status).toBe(400);
+        expect(response.body.msg).toBe("Invalid page value");
       });
     });
   });
@@ -186,17 +210,19 @@ describe("/api/articles", () => {
         article_id: expect.any(Number),
       });
     });
-  });
 
-  test("should return 400 if required fields are missing", async () => {
-    const newArticle = {
-      author: "butter_bridge",
-      title: "New Article",
-      body: "This is the body of the new article.",
-    };
-    const response = await request(app).post("/api/articles").send(newArticle);
-    expect(response.status).toBe(400);
-    expect(response.body.msg).toBe("Bad request: missing required fields");
+    test("should return 400 if required fields are missing", async () => {
+      const newArticle = {
+        author: "butter_bridge",
+        title: "New Article",
+        body: "This is the body of the new article.",
+      };
+      const response = await request(app)
+        .post("/api/articles")
+        .send(newArticle);
+      expect(response.status).toBe(400);
+      expect(response.body.msg).toBe("Bad request: missing required fields");
+    });
   });
 });
 
