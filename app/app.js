@@ -38,11 +38,4 @@ module.exports = app;
  * - Update relevant tests to check for null returns
  * - Refactor controllers to handle null returns appropriately
  *
- * Add new endpoints to endpoints.json
- * - PATCH /api/comments/:comment_id
- * - POST /api/articles
- * - GET /api/articles (pagination)
- * - GET /api/articles/:article_id/comments (pagination)
- * - POST /api/topics
- * - DELETE /api/articles/:article_id
  */

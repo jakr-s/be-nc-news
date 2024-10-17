@@ -8,5 +8,5 @@ exports.errorHandler = (err, req, res, next) => {
   }
 
   res.status(500).send({ msg: "Internal Server Error" });
-  console.error(err)
+  console.error(err);
 };

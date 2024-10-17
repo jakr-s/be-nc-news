@@ -201,7 +201,6 @@ exports.insertArticle = async ({
   return article;
 };
 
-
 exports.removeArticleById = async (article_id) => {
   const deleteCommentsQuery = format(
     `DELETE FROM comments
