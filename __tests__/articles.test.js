@@ -160,7 +160,7 @@ describe("/api/articles", () => {
   });
 
   describe("POST", () => {
-    test("should add a new article and respond with the newly added article", async () => {
+    test("should add a new article and respond with newly added article", async () => {
       const newArticle = {
         author: "butter_bridge",
         title: "New Article",
